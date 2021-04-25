@@ -19,7 +19,7 @@
             android:layout_height="120dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:src="@drawable/ic__96125901538117043"/>
+            android:src="@drawable/ic__pdf"/>
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvPdfName"
             android:layout_width="match_parent"
