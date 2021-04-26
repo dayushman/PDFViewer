@@ -2,7 +2,9 @@ package com.example.pdfviewer
 
 import android.os.Environment
 import androidx.lifecycle.*
+import androidx.recyclerview.selection.SelectionTracker
 import com.example.pdfviewer.modal.FileModal
+import com.google.android.material.snackbar.Snackbar
 import java.io.File
 
 
@@ -35,6 +37,21 @@ class MainViewModel: ViewModel() {
             FileModal(files[it],false)
         }
         listOfDocuments.postValue(modal)
+    }
 
+    fun delete(tracker: SelectionTracker<Long>?) : Boolean{
+        tracker?.selection?.forEach {
+            val value = listOfDocuments.value?.get(it.toInt())
+            val path = value?.file?.absolutePath
+            val file = File(path?:null)
+            if (file!=null) {
+                if (file.delete()) {
+                    listOfDocuments.value?.remove(value)
+                }
+                else
+                    return false
+            }
+        }
+        return true
     }
 }

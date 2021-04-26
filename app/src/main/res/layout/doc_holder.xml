@@ -4,14 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardBackgroundColor="@color/gray"
+    android:background="@color/gray"
     app:cardCornerRadius="12dp"
     android:elevation="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
+        android:id="@+id/cont"
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:gravity="center"
+        android:background="@color/gray"
         android:orientation="vertical">
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivPdf"

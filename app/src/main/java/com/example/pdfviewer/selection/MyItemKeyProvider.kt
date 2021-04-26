@@ -3,10 +3,12 @@ package com.example.pdfviewer.selection
 import androidx.recyclerview.selection.ItemKeyProvider
 import com.example.pdfviewer.adaptor.PDFAdaptor
 
-class MyItemKeyProvider(private val adapter: PDFAdaptor) : ItemKeyProvider<String>(SCOPE_CACHED)
+class MyItemKeyProvider(private val adapter: PDFAdaptor) : ItemKeyProvider<Long>(SCOPE_CACHED)
 {
-    override fun getKey(position: Int): String? =
-            adapter.pdfFiles[position].file.absolutePath
-    override fun getPosition(key: String): Int =
-            adapter.pdfFiles.indexOfFirst {it.file.absolutePath == key}
+    override fun getKey(position: Int): Long =
+            position.toLong()
+    override fun getPosition(key: Long): Int =
+            adapter.pdfFiles.indexOfFirst{
+                it.file.absolutePath == adapter.pdfFiles[key.toInt()].file.absolutePath
+            }
 }

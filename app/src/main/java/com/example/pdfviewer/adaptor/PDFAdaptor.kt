@@ -1,8 +1,12 @@
 package com.example.pdfviewer.adaptor
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.core.view.marginEnd
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -18,15 +22,17 @@ class PDFAdaptor: RecyclerView.Adapter<PDFAdaptor.PDFViewHolder>() {
     }
 
 
-    var tracker:SelectionTracker<String>? = null
+    private var tracker:SelectionTracker<Long>? = null
     var pdfFiles: MutableList<FileModal>
         get() = listDiffer.currentList
         set(value) = listDiffer.submitList(value)
     inner class PDFViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
-        fun getItemDetails(): ItemDetailsLookup.ItemDetails<String> =
-                object : ItemDetailsLookup.ItemDetails<String>() {
+        val image = itemView.ivPdf
+        val text = itemView.tvPdfName
+        fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+                object : ItemDetailsLookup.ItemDetails<Long>() {
                     override fun getPosition(): Int = adapterPosition
-                    override fun getSelectionKey(): String? = pdfFiles[adapterPosition].file.absolutePath
+                    override fun getSelectionKey(): Long = itemId
                 }
     }
 
@@ -36,9 +42,13 @@ class PDFAdaptor: RecyclerView.Adapter<PDFAdaptor.PDFViewHolder>() {
 
     override fun onBindViewHolder(holder: PDFViewHolder, position: Int) {
 
-        val isSelected = tracker?.isSelected(pdfFiles[position].file.absolutePath)?:false
-        if (isSelected)
-
+        val parent = holder.image.parent as LinearLayout
+        val isSelected = tracker?.isSelected(position.toLong())?:false
+        if (isSelected){
+            parent.background = ColorDrawable(Color.parseColor("#000000"))
+        }
+        else
+            parent.background = ColorDrawable(Color.parseColor("#2d2d2d"))
         holder.itemView.apply {
             tvPdfName.text = pdfFiles[position].file.name
             setOnClickListener {
@@ -50,13 +60,18 @@ class PDFAdaptor: RecyclerView.Adapter<PDFAdaptor.PDFViewHolder>() {
         }
     }
 
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
 
     override fun getItemCount(): Int {
         return pdfFiles.size
     }
     private var itemClickListener : ((FileModal) -> Unit)? = null
 
-
+    fun setTrack(tracker: SelectionTracker<Long>?){
+        this.tracker = tracker
+    }
     fun setOnItemClickListener(listener : (FileModal) -> Unit){
         itemClickListener = listener
     }
