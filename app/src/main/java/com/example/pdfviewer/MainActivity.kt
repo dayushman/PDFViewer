@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
             if (it!=null){
                 if (pdfAdaptor==null){
                     setAdaptor()
-                    progressBar.visibility = View.INVISIBLE
+                    progressBar.visibility = View.GONE
                     rvAllDocs.visibility = View.GONE
                     rvAllDocs.visibility = View.VISIBLE
                 }
