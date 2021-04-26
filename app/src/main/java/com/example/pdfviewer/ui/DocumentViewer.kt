@@ -1,11 +1,9 @@
-package com.example.pdfviewer
+package com.example.pdfviewer.ui
 
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.core.net.toUri
+import com.example.pdfviewer.R
 import kotlinx.android.synthetic.main.activity_document_viewer.*
-import timber.log.Timber
 import java.io.File
 
 class DocumentViewer : AppCompatActivity() {

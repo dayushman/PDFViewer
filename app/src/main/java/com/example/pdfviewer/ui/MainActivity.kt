@@ -1,15 +1,15 @@
-package com.example.pdfviewer
+package com.example.pdfviewer.ui
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.pdfviewer.MainViewModel
+import com.example.pdfviewer.adaptor.PDFAdaptor
+import com.example.pdfviewer.R
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -18,14 +18,11 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var mainViewModel:MainViewModel
+    lateinit var mainViewModel: MainViewModel
     var pdfAdaptor: PDFAdaptor? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         rvAllDocs.adapter = pdfAdaptor
         pdfAdaptor?.setOnItemClickListener {
             startActivity(
-                Intent(this,DocumentViewer::class.java).putExtra("path",it.absolutePath)
+                Intent(this, DocumentViewer::class.java).putExtra("path",it.file.absolutePath)
             )
         }
 
@@ -73,7 +70,7 @@ class MainActivity : AppCompatActivity() {
             }).check()
     }
 
-    fun setObservers(){
+    private fun setObservers(){
         mainViewModel._listOfDocuments.observe(this){
             if (it!=null){
                 if (pdfAdaptor==null){
