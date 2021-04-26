@@ -1,35 +1,38 @@
 package com.example.pdfviewer
 
 import android.os.Environment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import android.util.Log
+import androidx.lifecycle.*
+import kotlinx.coroutines.*
+import timber.log.Timber
 import java.io.File
 
 
 class MainViewModel: ViewModel() {
 
 
-    private var listOfDocuments = MutableLiveData<MutableList<File>>()
+  private var listOfDocuments = MutableLiveData<MutableList<File>>()
     val _listOfDocuments : LiveData<MutableList<File>>
-        get() = listOfDocuments
+    get() = listOfDocuments
 
-    fun searchFiles(rootFile: File): ArrayList<File> {
+
+     private fun searchFiles(rootFile: File): ArrayList<File> {
         val allFiles = rootFile.listFiles();
-        var files = ArrayList<File>()
-        allFiles.forEach {file ->
-            if (file.isDirectory && !file.isHidden){
-                files.addAll(searchFiles(file))
+        val files = ArrayList<File>()
+            allFiles.forEach { file ->
+                if (file.isDirectory && !file.isHidden){
+                    files.addAll(searchFiles(file))
+                }
+                else{
+                    if (file.name.endsWith(".pdf"))
+                        files.add(file)
+                }
             }
-            else{
-                if (file.name.endsWith(".pdf"))
-                    files.add(file)
-            }
-        }
         return files
     }
 
-    fun getAllDocs(){
-        listOfDocuments.postValue(searchFiles(Environment.getExternalStorageDirectory()))
+    fun getAllDocs() {
+            listOfDocuments.postValue(searchFiles(Environment.getExternalStorageDirectory()))
+
     }
 }

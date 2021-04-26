@@ -18,6 +18,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 
@@ -77,8 +79,6 @@ class MainActivity : AppCompatActivity() {
                 if (pdfAdaptor==null){
                     setAdaptor()
                     progressBar.visibility = View.GONE
-                    rvAllDocs.visibility = View.GONE
-                    rvAllDocs.visibility = View.VISIBLE
                 }
                 else
                     pdfAdaptor?.pdfFiles = it

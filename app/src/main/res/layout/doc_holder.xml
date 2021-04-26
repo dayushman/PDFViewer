@@ -8,12 +8,6 @@
     app:cardCornerRadius="12dp"
     android:elevation="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <!--
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"-->
-    app:cardElevation="8dp"
-    app:cardCornerRadius="12dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
@@ -26,7 +20,7 @@
             android:layout_marginTop="18dp"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:src="@drawable/ic__pdf"/>
+            android:src="@drawable/ic_pdf_white_24dp"/>
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvPdfName"
             android:layout_width="match_parent"

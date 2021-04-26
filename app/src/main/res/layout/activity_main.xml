@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -20,24 +20,17 @@
             android:textSize="24sp"
             android:textColor="@color/white"
             android:layout_margin="20dp"/>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:progressTint="@color/white"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvAllDocs"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:nestedScrollingEnabled="false"
             android:layout_weight="1" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:visibility="gone"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-
     </LinearLayout>
-
-
-</androidx.core.widget.NestedScrollView>
+</ScrollView>
