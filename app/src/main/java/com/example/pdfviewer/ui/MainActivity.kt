@@ -5,7 +5,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -15,19 +14,16 @@ import androidx.recyclerview.selection.StableIdKeyProvider
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.pdfviewer.MainViewModel
-import com.example.pdfviewer.adaptor.PDFAdaptor
 import com.example.pdfviewer.R
+import com.example.pdfviewer.adaptor.PDFAdaptor
 import com.example.pdfviewer.selection.MyItemDetailsLookup
-import com.example.pdfviewer.selection.MyItemKeyProvider
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_main.*
-import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity() {
@@ -45,10 +41,14 @@ class MainActivity : AppCompatActivity() {
         delete.setOnClickListener {
             val number = tracker?.selection?.size()
             if (number == 0)
-                Snackbar.make(it,"No Document Selected",Snackbar.LENGTH_LONG).show()
+                Snackbar.make(it, "No Document Selected", Snackbar.LENGTH_LONG).show()
             else{
-                if (!mainViewModel.delete(tracker))
-                    Snackbar.make(it,"Failed to Delete the Documents",Snackbar.LENGTH_LONG).show()
+                val ans = mainViewModel.delete(tracker)
+                if (ans)
+                    Snackbar.make(it, "Deleted", Snackbar.LENGTH_LONG).setTextColor(Color.parseColor("#ffffff")).show()
+                else
+                    Snackbar.make(it, "Not Deleted", Snackbar.LENGTH_LONG).setTextColor(Color.parseColor("#ffffff")).show()
+
             }
         }
         getPermission()
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
         pdfAdaptor?.setOnItemClickListener {
             startActivity(
-                Intent(this, DocumentViewer::class.java).putExtra("path",it.file.absolutePath)
+                    Intent(this, DocumentViewer::class.java).putExtra("path", it.absolutePath)
             )
         }
 
@@ -87,23 +87,18 @@ class MainActivity : AppCompatActivity() {
 
     private fun getPermission() {
         Dexter.withContext(this)
-            .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse) { /* ... */
-                    mainViewModel.getAllDocs()
-                }
+                .withPermissions(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                ).withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                        mainViewModel.getAllDocs()
+                    }
 
-                override fun onPermissionDenied(response: PermissionDeniedResponse) { /* ... */
-                    Snackbar.make(rvAllDocs, "Permission required", Snackbar.LENGTH_LONG)
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest?,
-                    token: PermissionToken?
-                ) { /* ... */
-                    token?.continuePermissionRequest()
-                }
-            }).check()
+                    override fun onPermissionRationaleShouldBeShown(permissions: List<PermissionRequest>, token: PermissionToken) {
+                        token.continuePermissionRequest()
+                    }
+                }).check()
     }
 
     private fun setObservers(){
@@ -117,19 +112,10 @@ class MainActivity : AppCompatActivity() {
                     pdfAdaptor?.pdfFiles = it
             }
         }
-        tracker?.addObserver(object: SelectionTracker.SelectionObserver<Long>(){
+        tracker?.addObserver(object : SelectionTracker.SelectionObserver<Long>() {
             override fun onSelectionChanged() {
-                val nItems:Int? = tracker?.selection?.size()
+                val nItems: Int? = tracker?.selection?.size()
 
-                if(nItems!=null && nItems > 0) {
-                    tvTitle.text = "$nItems items selected"
-                    supportActionBar?.setBackgroundDrawable(
-                            ColorDrawable(Color.parseColor("#ef6c00")))
-                } else {
-                    tvTitle.text = "RVSelection"
-                    supportActionBar?.setBackgroundDrawable(
-                            ColorDrawable(Color.parseColor("#000000")))
-                }
             }
         })
     }

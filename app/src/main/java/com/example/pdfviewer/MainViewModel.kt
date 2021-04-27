@@ -3,20 +3,20 @@ package com.example.pdfviewer
 import android.os.Environment
 import androidx.lifecycle.*
 import androidx.recyclerview.selection.SelectionTracker
-import com.example.pdfviewer.modal.FileModal
 import com.google.android.material.snackbar.Snackbar
 import java.io.File
+import java.nio.file.Files
 
 
 class MainViewModel: ViewModel() {
 
 
-  private var listOfDocuments = MutableLiveData<MutableList<FileModal>>()
-    val _listOfDocuments : LiveData<MutableList<FileModal>>
+  private var listOfDocuments = MutableLiveData<MutableList<File>>()
+    val _listOfDocuments : LiveData<MutableList<File>>
     get() = listOfDocuments
 
 
-     private fun searchFiles(rootFile: File): ArrayList<File> {
+     private fun searchFiles(rootFile:File): ArrayList<File> {
         val allFiles = rootFile.listFiles();
         val files = ArrayList<File>()
             allFiles.forEach { file ->
@@ -33,25 +33,24 @@ class MainViewModel: ViewModel() {
 
     fun getAllDocs() {
         val files = searchFiles(Environment.getExternalStorageDirectory())
-        val modal = MutableList(files.size){
-            FileModal(files[it],false)
-        }
-        listOfDocuments.postValue(modal)
+        listOfDocuments.postValue(files)
     }
 
     fun delete(tracker: SelectionTracker<Long>?) : Boolean{
         tracker?.selection?.forEach {
             val value = listOfDocuments.value?.get(it.toInt())
-            val path = value?.file?.absolutePath
-            val file = File(path?:null)
-            if (file!=null) {
-                if (file.delete()) {
+            if (value?.exists() == true) {
+                if (value.deleteRecursively()) {
                     listOfDocuments.value?.remove(value)
                 }
-                else
+                else{
                     return false
+                }
             }
+            else
+                return false
         }
+        tracker?.clearSelection()
         return true
     }
 }

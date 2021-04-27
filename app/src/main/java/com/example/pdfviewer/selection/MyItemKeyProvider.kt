@@ -9,6 +9,6 @@ class MyItemKeyProvider(private val adapter: PDFAdaptor) : ItemKeyProvider<Long>
             position.toLong()
     override fun getPosition(key: Long): Int =
             adapter.pdfFiles.indexOfFirst{
-                it.file.absolutePath == adapter.pdfFiles[key.toInt()].file.absolutePath
+                it.absolutePath == adapter.pdfFiles[key.toInt()].absolutePath
             }
 }

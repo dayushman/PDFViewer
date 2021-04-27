@@ -6,15 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.core.view.marginEnd
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pdfviewer.modal.FileModal
 import com.example.pdfviewer.R
 import kotlinx.android.synthetic.main.doc_holder.view.*
+import java.io.File
 
 class PDFAdaptor: RecyclerView.Adapter<PDFAdaptor.PDFViewHolder>() {
     init {
@@ -23,7 +22,7 @@ class PDFAdaptor: RecyclerView.Adapter<PDFAdaptor.PDFViewHolder>() {
 
 
     private var tracker:SelectionTracker<Long>? = null
-    var pdfFiles: MutableList<FileModal>
+    var pdfFiles: MutableList<File>
         get() = listDiffer.currentList
         set(value) = listDiffer.submitList(value)
     inner class PDFViewHolder(itemView:View):RecyclerView.ViewHolder(itemView){
@@ -50,7 +49,7 @@ class PDFAdaptor: RecyclerView.Adapter<PDFAdaptor.PDFViewHolder>() {
         else
             parent.background = ColorDrawable(Color.parseColor("#2d2d2d"))
         holder.itemView.apply {
-            tvPdfName.text = pdfFiles[position].file.name
+            tvPdfName.text = pdfFiles[position].name
             setOnClickListener {
                 itemClickListener?.let {click->
                     click(pdfFiles[position])
@@ -67,21 +66,21 @@ class PDFAdaptor: RecyclerView.Adapter<PDFAdaptor.PDFViewHolder>() {
     override fun getItemCount(): Int {
         return pdfFiles.size
     }
-    private var itemClickListener : ((FileModal) -> Unit)? = null
+    private var itemClickListener : ((File) -> Unit)? = null
 
     fun setTrack(tracker: SelectionTracker<Long>?){
         this.tracker = tracker
     }
-    fun setOnItemClickListener(listener : (FileModal) -> Unit){
+    fun setOnItemClickListener(listener : (File) -> Unit){
         itemClickListener = listener
     }
 
-    private val listDiffer:AsyncListDiffer<FileModal> = AsyncListDiffer(this,object : DiffUtil.ItemCallback<FileModal>(){
-        override fun areItemsTheSame(oldItem: FileModal, newItem: FileModal): Boolean {
-            return oldItem.file.absolutePath == newItem.file.absolutePath
+    private val listDiffer:AsyncListDiffer<File> = AsyncListDiffer(this,object : DiffUtil.ItemCallback<File>(){
+        override fun areItemsTheSame(oldItem: File, newItem: File): Boolean {
+            return oldItem.absolutePath == newItem.absolutePath
         }
 
-        override fun areContentsTheSame(oldItem: FileModal, newItem: FileModal): Boolean {
+        override fun areContentsTheSame(oldItem: File, newItem: File): Boolean {
             return oldItem.hashCode() == newItem.hashCode()
         }
     }
