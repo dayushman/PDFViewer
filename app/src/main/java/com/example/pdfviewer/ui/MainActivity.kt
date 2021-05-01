@@ -3,9 +3,9 @@ package com.example.pdfviewer.ui
 import android.Manifest
 import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.selection.SelectionPredicates
@@ -17,6 +17,8 @@ import com.example.pdfviewer.MainViewModel
 import com.example.pdfviewer.R
 import com.example.pdfviewer.adaptor.PDFAdaptor
 import com.example.pdfviewer.selection.MyItemDetailsLookup
+import com.example.pdfviewer.ui.bottomsheets.AboutBottomSheetFragment
+import com.example.pdfviewer.ui.bottomsheets.InfoBottomSheetFragment
 import com.google.android.material.snackbar.Snackbar
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -38,25 +40,59 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        delete.setOnClickListener {
-            val number = tracker?.selection?.size()
-            if (number == 0)
-                Snackbar.make(it, "No Document Selected", Snackbar.LENGTH_LONG).show()
-            else{
-                val ans = mainViewModel.delete(tracker)
-                if (ans)
-                    Snackbar.make(it, "Deleted", Snackbar.LENGTH_LONG).setTextColor(Color.parseColor("#ffffff")).show()
-                else
-                    Snackbar.make(it, "Not Deleted", Snackbar.LENGTH_LONG).setTextColor(Color.parseColor("#ffffff")).show()
-
-            }
-        }
+        setClickListeners()
         getPermission()
         setObservers()
 
 
     }
 
+    private fun setClickListeners() {
+        delete.setOnClickListener {
+            val number = tracker?.selection?.size()
+            if (number == 0)
+                Snackbar.make(it, "No Document Selected", Snackbar.LENGTH_LONG).show()
+            else {
+                AlertDialog.Builder(this).setTitle("Delete")
+                        .setIcon(R.drawable.ic__pdf)
+                        .setMessage("Are you sure you want to delete ${tracker?.selection?.size()} items?")
+                        .setNegativeButton("No") { dialog, _ -> dialog?.cancel() }
+                        .setPositiveButton("Yes") { _, _ ->
+                            val ans = mainViewModel.delete(tracker)
+                            if (ans)
+                                Snackbar.make(it, "Deleted", Snackbar.LENGTH_LONG)
+                                        .setTextColor(Color.parseColor("#ffffff")).show()
+                            else
+                                Snackbar.make(it, "Not Deleted", Snackbar.LENGTH_LONG)
+                                        .setTextColor(Color.parseColor("#ffffff")).show()
+                        }.show()
+            }
+        }
+        ib_info.setOnClickListener {
+            when(tracker?.selection?.size()){
+                0->{
+                    AboutBottomSheetFragment().apply {
+                        show(supportFragmentManager,"About Dialog")
+                    }
+                }
+                1 -> {
+                     tracker?.selection?.forEach {
+                         val file = pdfAdaptor?.pdfFiles?.get(it.toInt())
+                         val infoBottomSheet = InfoBottomSheetFragment(file!!)
+                         infoBottomSheet.apply {
+                             show(supportFragmentManager,"Info Dialog")
+                         }
+                    }
+                }
+                else->{
+                    Snackbar.make(it,"${tracker?.selection?.size()} files selected",Snackbar.LENGTH_LONG)
+                            .setAction("Deselect"){
+                        tracker?.clearSelection()
+                    }.show()
+                }
+            }
+        }
+    }
     private fun setAdaptor() {
         pdfAdaptor = PDFAdaptor()
         pdfAdaptor?.pdfFiles = mainViewModel._listOfDocuments.value!!

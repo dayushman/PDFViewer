@@ -6,5 +6,39 @@
         <item name="colorPrimaryDark">#FF000000</item>
         <item name="colorPrimaryVariant">#E3000000</item>
         <item name="colorOnPrimary">@color/white</item>
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+    </style>
+    <style
+        name="label"
+        parent="@style/Widget.MaterialComponents.TextView">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:fontFamily">@font/googlesans_bold</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:gravity">right</item>
+    </style>
+    <style
+        name="value"
+        parent="@style/Widget.MaterialComponents.TextView">
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">@font/googlesans_medium</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="behavior_peekHeight">600dp</item>
+        <item name="cornerRadius">3dp</item>
     </style>
 </resources>
